@@ -15,6 +15,10 @@ var wb_Y1;
 var wb_X2;
 var wb_Y2;
 
+// JSON
+var jsonXY = {};
+var url = 'http://127.0.0.1:5000/api/submitXY'
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
@@ -35,6 +39,9 @@ function setup() {
 
 function resetSketch() {
   clear();
+  jsonXY = {};
+  pointsArrayX = [];
+  pointsArrayY = [];
   strokeWeight(2);
 
   // arrows sizes
@@ -74,6 +81,17 @@ function mousePressed() {
   if (isInsideWhiteboard()) {
     clear();
     resetSketch();
+  } else {
+    jsonXY.X = pointsArrayX;
+    jsonXY.Y = pointsArrayY;
+    // saveJSON(jsonXY, 'points.json');
+    // console.log(jsonXY)
+
+    httpPost(url, 'json', jsonXY, function(result) {
+      console.log(result)
+    }, function(error) {
+      console.log(error.toString())
+    })
   }
 }
 

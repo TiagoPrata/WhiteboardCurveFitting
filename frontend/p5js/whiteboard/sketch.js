@@ -4,7 +4,7 @@ var pointsArrayY = [];
 // GUI params
 var limX = '100';
 var limY = '100';
-var poliIndex = 3;
+var polyDegree = 3;
 var apply = false;
 var formula = '';
 var gui;
@@ -17,7 +17,7 @@ var wb_Y2;
 
 // JSON
 var jsonXY = {};
-var url = 'http://127.0.0.1:5000/api/submitXY'
+var url = 'http://127.0.0.1:5000/api/polyfit'
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -30,9 +30,9 @@ function setup() {
 
   resetSketch();
 
-  sliderRange(1, 6, 1);
+  sliderRange(1, 15, 1);
   gui = createGui('Config');
-  gui.addGlobals('limX', 'limY', 'poliIndex', 'apply', 'formula');
+  gui.addGlobals('limX', 'limY', 'polyDegree', 'apply', 'formula');
 
   // noLoop();
 }
@@ -67,7 +67,7 @@ function userDrawing() {
       strokeWeight(4);
       point(mouseX, mouseY);
       append(pointsArrayX, mouseX)
-      append(pointsArrayY, mouseY)
+      append(pointsArrayY, windowHeight - mouseY)
     }
   }
   
@@ -77,11 +77,19 @@ function isInsideWhiteboard() {
   return ((mouseX > wb_X1) && (mouseX < wb_X2) && (mouseY > wb_Y1) && (mouseY < wb_Y2))
 }
 
+function isOverControls() {
+  return ((mouseX > 0) && (mouseX < wb_X1) && (mouseY < 310))
+}
+
 function mousePressed() {
   if (isInsideWhiteboard()) {
     clear();
     resetSketch();
+  } else if (isOverControls()) {
+    // do nothing
+    formula='teste'
   } else {
+    jsonXY.degree = polyDegree;
     jsonXY.X = pointsArrayX;
     jsonXY.Y = pointsArrayY;
     // saveJSON(jsonXY, 'points.json');
